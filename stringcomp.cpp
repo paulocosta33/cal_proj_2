@@ -53,10 +53,13 @@ int numStringMatching(string filename,string toSearch)
 
 	string line1;
 	int num=0;
-
+	int aux=0;
 	while (!fich.eof()) {
+		aux=num;
 		getline(fich,line1);
 		num+=kmp(line1,toSearch);
+		if (num!=aux)
+			cout<<line1<<endl;
 	}
 	fich.close();
 	return num;
@@ -96,14 +99,18 @@ float numApproximateStringMatching(string filename,string toSearch)
 
 	string line1, word1;
 	int num=0, nwords=0;
-
+	int aux=0;
 	while (!fich.eof()) {
+		aux=num;
 		getline(fich,line1);
 		stringstream s1(line1);
 		while (!s1.eof()) {
 			s1 >> word1;
 			num += editDistance(toSearch,word1);
 			nwords++;
+			if(aux!=num){
+				cout<<line1<<endl;
+			}
 		}
 	}
 	fich.close();
