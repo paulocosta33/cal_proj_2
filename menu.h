@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 #include <set>
+#include "stringcomp.cpp"
 using namespace std;
 /**
  * Class que contem o menu e todos os seus componentes;
@@ -57,6 +58,14 @@ public:
 		double res;
 		res = sqrt((double)dlong*dlong + dlat*dlat);
 		return res;
+	}
+
+	void item_ficheiro(Item* item,string filename)
+	{
+		ofstream searchF;
+		searchF.open (filename.c_str());
+		searchF<<item->nome<<";"<<item->propriet<<";"<<item->peso<<";"<<item->valor<<";"<<item->dest<<";"<<item->fatura;
+		searchF.close();
 	}
 	/**
 	 * Funcao utilizada no sort para ordenacao, retorna verdadeiro se o u<v;
@@ -257,13 +266,12 @@ public:
 		string dest,destinf,propriet;
 		int fatura,peso;
 		double valor;
-		ofstream searchF;
-		searchF.open ("itemInfo.txt",ofstream::app);
 		cout<< "#========================# \n";
 		cout<< "| 1- Ver Items           |\n";
 		cout<< "| 2- Criar Item          |\n";
 		cout<< "| 3- Remover Item        | \n";
-		cout<< "| 4- Retroceder          |\n";
+		cout<< "| 4- Procurar Item       | \n";
+		cout<< "| 5- Retroceder          |\n";
 		cout<< "#========================# \n";
 		cin >> opcao;
 		if (opcao==1)
@@ -283,29 +291,18 @@ public:
 		}
 		if (opcao==2)
 		{
-
-
-			if(searchF.is_open()){
 			cout<<"Introduza o nome do item:";
 			cin>>nome;
-			searchF << nome << ";";
 			cout<<"Introduza o peso do item:";
 			cin>>peso;
-			searchF << peso << ";";
 			cout<<"Introduza o nome do proprietario:";
 			cin>> propriet;
-			searchF << propriet << ";";
 			cout<<"Introduza a fatura do item:";
 			cin>>fatura;
-			searchF << fatura << ";";
 			cout<<"Introduza o valor do item:";
 			cin>>valor;
-			searchF << valor << ";";
 			cout<<"Introduza o destino do item:";
 			cin>>destinf;
-			searchF << destinf << ";";
-			searchF << "\n";
-
 
 			for(unsigned int i=0; i< grafo->vertexSet.size();i++)
 			{
@@ -318,10 +315,11 @@ public:
 			Item * item= new Item( nome, propriet,valor, peso, dest,fatura);
 			item->destinf=destinf;
 			items.push_back(item);
+			item_ficheiro(item,"itemInfo.txt");
 			//searchF<<nome<<";"<<peso<<";"<<propriet<<";"<<fatura<<";"<<valor<<";"<<destinf<<'\n';
 			menuItems();
 			//
-			}
+
 
 		}
 
@@ -340,6 +338,10 @@ public:
 			menuItems();
 		}
 		if(opcao==4)
+		{
+			menuProcura();
+		}
+		if(opcao==5)
 		{
 			menu1();
 		}
@@ -636,8 +638,87 @@ public:
 		menu1();
 	} //TODO;
 
+	//TODO
+	void menuProcura()
+	{
+		int opcao;
+		cout<< "#========================# \n";
+		cout<< "| 1- Por Nome do Prop.   | \n";
+		cout<< "| 2- Por Rua             |\n";
+		cout<< "| 3- Retroceder          |\n";
+		cout<< "#========================# \n";
+		cin >>opcao;
+		if(opcao==1)
+		{	string nomeprop;
+			int opcao2;
+			cout<< "#===============================# \n";
+			cout<< "| 1- Algoritmo Pesquisa Exata   | \n";
+			cout<< "| 2- Algotitmo Pesquisa Aprox.  |\n";
+			cout<< "| 3- Algoritmo Pesquisa KMP     | \n";
+			cout<< "| 4- Retroceder                 |\n";
+		    cout<< "#===============================# \n";
+		    cin >> opcao2;
+		    if(opcao2==1)
+		    {	cout<< "Insira o nome do Proprietario a Pesquisar\n";
+	    	cin>>nomeprop;
+		    	numStringMatching("itemInfo.txt",nomeprop);
+		    	//TODO;
+		    }
+		    if(opcao2==2)
+		    {	cout<< "Insira o nome do Proprietario a Pesquisar\n";
+	    		cin>>ruapesq;
+		    	numApproximateStringMatching("itemInfo.txt",nomeprop);
+		    	//TODO
+		    }
+		    if(opcao2==3)
+		    {
+		    	//TODO
+		    }
+		    if(opcao2==4)
+		    {
+		    	menuProcura();
+		    }
+		}
+		if(opcao==2)
+		{
+			int opcao2;
+			string ruapesq;
+			cout<< "#===============================# \n";
+			cout<< "| 1- Algoritmo Pesquisa Exata   | \n";
+			cout<< "| 2- Algotitmo Pesquisa Aprox.  |\n";
+			cout<< "| 3- Algoritmo Pesquisa KMP     | \n";
+			cout<< "| 4- Retroceder                 |\n";
+		    cout<< "#===============================# \n";
+		    cin >> opcao2;
+				    if(opcao2==1)
+				    {	cout<< "Insira a Rua a Pesquisar\n";
+				    	cin>>ruapesq;
+				    	numStringMatching("itemInfo.txt",ruapesq);
+				    }
+				    if(opcao2==2)
+				    {
+				    	cout<< "Insira a Rua a Pesquisar\n";
+				    	cin>>ruapesq;
+				    	numApproximateStringMatching("itemInfo.txt",ruapesq);
+				    	//TODO
+				    }
+				    if(opcao2==3)
+				    {	//KMP BRUTEFORCE
+				    	//TODO
+				    }
+				    if(opcao2==4)
+				    {
+				    	menuProcura();
+				    }
+		}
+		if(opcao==3)
+		{
+			menuItems();
+		}
+	}
+
 	/**
-	 * Menu onde � posivel visualizar o mapa atual;
+	 * Menu onde e posivel visualizar o mapa atual;
 	 */
 	void menuMapa()
 	{
